@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+
 struct student{
     int student_id;
     char full_name[50];
@@ -20,6 +22,7 @@ void performance_category(char grade);
 void grade_comments(char grade);
 void save_to_file(struct student students[5]);
 void load_from_file(struct student students[5]);
+void clean_string(char *str);
 
 
 void input_students(struct student students[5]) {
@@ -36,6 +39,7 @@ void input_students(struct student students[5]) {
         getchar();
         printf("please enter student full name: ");
         fgets(students[i].full_name, 50, stdin);
+        clean_string(students[i].full_name);
         
         do{
             printf("please enter student age(17-25): ");
@@ -48,18 +52,19 @@ void input_students(struct student students[5]) {
         }while (students[i].total_marks < 0 || students[i].total_marks > 400);
         
     }
-
+    
     calculate_average(students);
     assign_grade(students);
 }
 
 
 void display_students(struct student students[], int x) {
-    printf("\nID\tName\t\tAge \tMarks \tAvg \tGrade\n");
+    printf("\n%-5s %-20s %-5s %-8s %-7s %-5s\n",
+           "ID", "Name", "Age", "Marks", "Avg", "Grade");
     printf("---------------------------------------------------------\n");
 
     for (int i = 0; i < x; i++) {
-        printf("%d\t%-15s\t%d\t%.2f\t%.2f\t%c\n",
+        printf("%-5d %-20s %-5d %-8.2f %-7.2f %-5c\n",
                students[i].student_id, students[i].full_name, students[i].age,students[i].total_marks,students[i].average, students[i].grade);
 
         performance_category(students[i].grade);
@@ -132,6 +137,7 @@ void update_student(struct student *students) {
         
             printf("Enter new full name: ");
             fgets((students + i)->full_name, 50, stdin);
+            clean_string(students[i].full_name);
 
             
             do {
@@ -203,10 +209,15 @@ void load_from_file(struct student students[5]){
     for (int i = 0; i < 5; i++) {
         fprintf(fptr, "%d,%49[^,],%d,%.2f,%.2f,%c\n",
             students[i].student_id, students[i].full_name, students[i].age,students[i].total_marks,students[i].average, students[i].grade);
+            clean_string(students[i].full_name);
     }
     fclose(fptr);
     printf("students data loaded successfully from the file");
 }
+void clean_string(char *str) {
+    str[strcspn(str, "\r\n")] = '\0';
+}
+
 
 
 
@@ -291,3 +302,4 @@ int main(){
     
 }
     
+
